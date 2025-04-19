@@ -15,33 +15,9 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
-  name      String
-  email     String    @unique
-  password  String
-  projects  Project[] @relation("OwnerProjects")
-  tasks     Task[]    @relation("AssigneeTasks")
-  createdAt DateTime  @default(now())
-}
-
-model Project {
-  id          Int       @id @default(autoincrement())
-  name        String
-  description String?
-  owner       User      @relation("OwnerProjects", fields: [ownerId], references: [id])
-  ownerId     Int
-  tasks       Task[]    @relation("ProjectTasks")
-  createdAt   DateTime  @default(now())
-}
-
-model Task {
-  id          Int       @id @default(autoincrement())
-  title       String
-  description String?
-  status      String    @default("pending") // can be "pending", "in_progress", "done"
-  project     Project   @relation("ProjectTasks", fields: [projectId], references: [id])
-  projectId   Int
-  assignee    User      @relation("AssigneeTasks", fields: [assigneeId], references: [id])
-  assigneeId  Int
-  createdAt   DateTime  @default(now())
+  id       String  @id @default(uuid())
+  email    String  @unique
+  password String
+  role     String  @default("user")
+  createdAt DateTime @default(now())
 }

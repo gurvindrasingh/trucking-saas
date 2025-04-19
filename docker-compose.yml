@@ -2,18 +2,18 @@ version: "3.8"
 
 services:
   auth-service:
-    container_name: auth-service
+    container_name: auth-service-container
     build:
       context: ./services/auth-service
       dockerfile: ./docker/services/auth-service/Dockerfile
-    #volumes:
-      #- .:/usr/src/app
-      #- /usr/src/app/node_modules
+    volumes:
+      - ./services/auth-service:/usr/src/app
+      - /usr/src/app/node_modules
     ports:
-      - "3001:3000"
-      - "9229:9229"
-    #env_file:
-      #- ./services/auth-service/.env
+      - "${AUTH_HOST_PORT}:${AUTH_DOCKER_PORT}"
+      - "${AUTH_HOST_DEBUG_PORT}:${AUTH_DOCKER_DEBUG_PORT}"
+    env_file:
+      - ./services/auth-service/.env
     depends_on:
       - auth-db
     command: sh -c "npm run debug"
@@ -22,14 +22,16 @@ services:
 
   auth-db:
     image: postgres:13-alpine
-    container_name: auth-db
+    container_name: auth-db-container
     restart: always
     ports:
-      - "5432:5432"
+      - "${PGDB_HOST_PORT}:${PGDB_DOCKER_PORT}"
+    env_file:
+      - ./services/auth-service/.env
     environment:
-      POSTGRES_USER: auth-db-user
-      POSTGRES_PASSWORD: autha7s89fhkj34r8yanskfdsf9as
-      POSTGRES_DB: auth_db
+      POSTGRES_USER: ${PGDB_USER}
+      POSTGRES_PASSWORD: ${PGDB_PASSWORD}
+      POSTGRES_DB: ${PGDB_NAME}
     volumes:
       - auth-db-data:/var/lib/postgresql/data
     networks:
@@ -40,6 +42,8 @@ services:
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      - trucking-network
 
 networks:
   trucking-network:
