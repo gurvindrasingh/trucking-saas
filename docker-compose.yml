@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  auth-service:
+    container_name: auth-service
+    build:
+      context: ./services/auth-service
+      dockerfile: ./docker/services/auth-service/Dockerfile
+    #volumes:
+      #- .:/usr/src/app
+      #- /usr/src/app/node_modules
+    ports:
+      - "3001:3000"
+      - "9229:9229"
+    #env_file:
+      #- ./services/auth-service/.env
+    depends_on:
+      - auth-db
+    command: sh -c "npm run debug"
+    networks:
+      - trucking-network
+
+  auth-db:
+    image: postgres:13-alpine
+    container_name: auth-db
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: auth-db-user
+      POSTGRES_PASSWORD: autha7s89fhkj34r8yanskfdsf9as
+      POSTGRES_DB: auth_db
+    volumes:
+      - auth-db-data:/var/lib/postgresql/data
+    networks:
+      - trucking-network
+
+  db-adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8080:8080"
+
+networks:
+  trucking-network:
+    driver: bridge
+
+volumes:
+  auth-db-data:
