@@ -1,5 +1,5 @@
 .DS_Store
-.env
+.env*
 services/auth-service/dist/
 services/auth-service/node_modules/
 services/auth-service/src/generated/
