@@ -1,0 +1,6 @@
+containers:
+  - name: jenkins
+    image: ghcr.io/gurvindrasingh/jenkins-with-docker:latest
+    imagePullPolicy: Always
+    ports:
+      - containerPort: 8080

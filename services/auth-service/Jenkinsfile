@@ -2,9 +2,10 @@ pipeline {
     agent any
 
     environment {
-        GHCR_CREDENTIALS = credentials('GHCR_PAT')
-        KUBECONFIG_PATH = credentials('minikube-kubeconfig')
+        GHCR_CREDENTIALS = credentials('GHCR_PAT')  // GitHub Container Registry credentials
+        KUBECONFIG_PATH = credentials('minikube-kubeconfig')  // Kubeconfig for Minikube
         IMAGE_NAME = "ghcr.io/gurvindrasingh/auth-service"
+        IMAGE_TAG = "latest"  // Or use env.BUILD_ID if you version images that way
     }
 
     options {
@@ -19,25 +20,12 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('Pull Image from GHCR') {
             steps {
                 script {
-                    echo "🔨 Building Docker Image..."
-                    def tag = "${IMAGE_NAME}:${env.BUILD_ID}"
-                    sh "docker build -f docker/services/auth-service/Dockerfile -t ${tag} ."
-                    env.IMAGE_TAG = tag
-                }
-            }
-        }
-
-        stage('Push to GHCR') {
-            steps {
-                script {
-                    echo "🚀 Pushing to GHCR..."
-                    sh """
-                        echo "${GHCR_CREDENTIALS_PSW}" | docker login ghcr.io -u "${GHCR_CREDENTIALS_USR}" --password-stdin
-                        docker push ${IMAGE_TAG}
-                    """
+                    echo "🔄 Pulling Docker image from GHCR..."
+                    sh "echo $GHCR_CREDENTIALS_PSW | docker login ghcr.io -u $GHCR_CREDENTIALS_USR --password-stdin"
+                    sh "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
                 }
             }
         }
@@ -45,9 +33,9 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 script {
-                    echo "📦 Deploying to Kubernetes..."
+                    echo "🚀 Deploying to Kubernetes..."
                     withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
-                        sh "kubectl set image deployment/auth-service auth-service=${IMAGE_TAG} --namespace=default || kubectl apply -f kubernetes/deployment.yaml"
+                        sh "kubectl set image deployment/auth-service auth-service=${IMAGE_NAME}:${IMAGE_TAG} --namespace=default || kubectl apply -f infra/k8s/auth-service/deployment.yaml"
                     }
                 }
             }
