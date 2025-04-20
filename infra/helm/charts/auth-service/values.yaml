@@ -1,0 +1,16 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/your-repo/auth-service
+  tag: latest
+
+service:
+  name: auth-service
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+env:
+  DATABASE_URL: postgres://auth-db-user:autha7s89fhkj34r8yanskfdsf9as@postgres-service:5432/auth_db
+  JWT_SECRET: your-jwt-secret-here

@@ -1,0 +1,63 @@
+pipeline {
+    agent any
+
+    environment {
+        GHCR_CREDENTIALS = credentials('GHCR_PAT')
+        KUBECONFIG_PATH = credentials('minikube-kubeconfig')
+        IMAGE_NAME = "ghcr.io/gurvindrasingh/auth-service"
+    }
+
+    options {
+        disableConcurrentBuilds()
+        durabilityHint('MAX_SURVIVABILITY')
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    echo "🔨 Building Docker Image..."
+                    def tag = "${IMAGE_NAME}:${env.BUILD_ID}"
+                    sh "docker build -f docker/services/auth-service/Dockerfile -t ${tag} ."
+                    env.IMAGE_TAG = tag
+                }
+            }
+        }
+
+        stage('Push to GHCR') {
+            steps {
+                script {
+                    echo "🚀 Pushing to GHCR..."
+                    sh """
+                        echo "${GHCR_CREDENTIALS_PSW}" | docker login ghcr.io -u "${GHCR_CREDENTIALS_USR}" --password-stdin
+                        docker push ${IMAGE_TAG}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    echo "📦 Deploying to Kubernetes..."
+                    withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+                        sh "kubectl set image deployment/auth-service auth-service=${IMAGE_TAG} --namespace=default || kubectl apply -f kubernetes/deployment.yaml"
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '🧹 Cleaning up Docker...'
+            sh 'docker system prune -f'
+        }
+    }
+}

@@ -1,0 +1,5 @@
+apiVersion: v2
+name: auth-service
+description: A simple Helm chart for the auth service
+type: application
+version: 0.1.0
