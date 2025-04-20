@@ -4,7 +4,7 @@ services:
   auth-service:
     container_name: auth-service-container
     build:
-      context: ./services/auth-service
+      context: .
       dockerfile: ./docker/services/auth-service/Dockerfile
     volumes:
       - ./services/auth-service:/usr/src/app
@@ -41,7 +41,7 @@ services:
     image: adminer
     restart: always
     ports:
-      - "8080:8080"
+      - "${ADMINER_HOST_PORT}:${ADMINER_DOCKER_PORT}"
     networks:
       - trucking-network
 
