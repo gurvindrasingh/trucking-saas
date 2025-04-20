@@ -86,11 +86,11 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
+          
       - name: Build and push Docker image
         run: |
-          TAG=ghcr.io/${{ github.repository }}/cms:${{ github.sha }}
-          docker build -f Dockerfile.dev -t $TAG ./api
+          TAG=ghcr.io/${{ github.repository }}/auth-service:${{ github.sha }}
+          docker build -f docker/services/auth-service/Dockerfile -t $TAG services/auth-service/
           docker push $TAG
 
   auto-tag:
