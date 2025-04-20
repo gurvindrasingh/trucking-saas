@@ -1,11 +1,9 @@
-version: "3.8"
-
 services:
   auth-service:
     container_name: auth-service-container
     build:
-      context: .
-      dockerfile: ./docker/services/auth-service/Dockerfile
+      context: ./services/auth-service
+      dockerfile: ../../docker/services/auth-service/Dockerfile
     volumes:
       - ./services/auth-service:/usr/src/app
       - /usr/src/app/node_modules
