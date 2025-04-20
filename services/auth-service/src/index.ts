@@ -1,46 +1,9 @@
-import app from './app';
 import dotenv from 'dotenv';
-
 dotenv.config();
+import app from './app';
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.AUTH_DOCKER_PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Auth service running on port ${PORT}`);
 });
-
-
-
-
-
-
-
-
-
-/*import dotenv from "dotenv";
-dotenv.config();
-
-import express from "express";
-import authRoutes from "./routes/auth.routes";
-import userRoutes from "./routes/user.routes";
-import projectRoutes from "./routes/project.route";
-
-const PORT = process.env.PORT || 3000;
-
-const app = express();
-app.use(express.json());
-
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
-
-app.use("/api", authRoutes);
-app.use('/api', userRoutes);
-app.use('/api/projects', projectRoutes);
-
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
-
-app.listen(PORT, () => console.log("Server running on port 3000"));*/

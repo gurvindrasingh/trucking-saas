@@ -1,14 +1,3 @@
-import { Request, Response } from 'express';
-
-export const register = async (req: Request, res: Response) => {
-  res.json({ message: 'Register endpoint' });
-};
-
-export const login = async (req: Request, res: Response) => {
-  res.json({ message: 'Login endpoint' });
-};
-
-/*
 import { Request, Response } from "express";
 import { signupUser, loginUser } from "../services/auth.service";
 
@@ -29,4 +18,3 @@ export const login = async (req: Request, res: Response) => {
     res.status(401).json({ error: (err as Error).message });
   }
 };
-*/

@@ -8,6 +8,8 @@ RUN npm install
 
 COPY . .
 
+RUN npm run prisma:migrate
 RUN npm run prisma:generate
+RUN npm run prisma:seed
 
 CMD ["npm", "run", "debug"]

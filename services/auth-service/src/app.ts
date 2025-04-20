@@ -1,14 +1,18 @@
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import authRoutes from './routes/auth.routes';
+import express from "express";
+import authRoutes from "./routes/auth.routes";
 
 const app = express();
-
-app.use(cors());
-app.use(morgan('dev'));
 app.use(express.json());
 
-app.use('/api/auth', authRoutes); // Base route
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
+app.use("/api", authRoutes);
+
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 
 export default app;
