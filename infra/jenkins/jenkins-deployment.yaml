@@ -1,6 +1,27 @@
-containers:
-  - name: jenkins
-    image: ghcr.io/gurvindrasingh/jenkins-with-docker:latest
-    imagePullPolicy: Always
-    ports:
-      - containerPort: 8080
+apiVersion: apps/v1  # This specifies the API version (should be apps/v1 for Deployments)
+kind: Deployment  # This specifies the kind of resource (Deployment, in this case)
+metadata:
+  name: jenkins
+  namespace: jenkins  # Specify the namespace where Jenkins will run
+spec:
+  replicas: 1  # Number of Jenkins pods
+  selector:
+    matchLabels:
+      app: jenkins
+  template:
+    metadata:
+      labels:
+        app: jenkins
+    spec:
+      containers:
+        - name: jenkins
+          image: ghcr.io/gurvindrasingh/jenkins-with-docker:latest  # Use the image you pushed to GHCR
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: jenkins-home
+              mountPath: /var/jenkins_home
+      volumes:
+        - name: jenkins-home
+          persistentVolumeClaim:
+            claimName: jenkins-home-pvc  # You may need to create a PVC if persistent storage is required
