@@ -53,40 +53,22 @@ pipeline {
         //     }
         // }
 
-        // stage('Install kubectl') {
-        //     steps {
-        //         script {
-        //         sh '''
-        //             if [ ! -f "$HOME/bin/kubectl" ]; then
-        //             echo "🔧 Installing kubectl locally..."
-        //             mkdir -p $HOME/bin
-        //             curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
-        //             chmod +x ./kubectl
-        //             mv ./kubectl $HOME/bin/kubectl
-        //             else
-        //             echo "✅ kubectl already exists."
-        //             fi
-        //             export PATH=$HOME/bin:$PATH
-        //             kubectl version --client
-        //         '''
-        //         }
-        //     }
-        // }
-
         stage('Install kubectl') {
             steps {
                 script {
-                    sh """
-                        if ! command -v kubectl > /dev/null; then
-                            echo "🔧 Installing kubectl..."
-                            curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
-                            chmod +x kubectl
-                            mv kubectl /usr/local/bin/kubectl
-                        else
-                            echo "✅ kubectl already exists."
-                        fi
-                        kubectl version --client
-                    """
+                sh '''
+                    if [ ! -f "$HOME/bin/kubectl" ]; then
+                    echo "🔧 Installing kubectl locally..."
+                    mkdir -p $HOME/bin
+                    curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
+                    chmod +x ./kubectl
+                    mv ./kubectl $HOME/bin/kubectl
+                    else
+                    echo "✅ kubectl already exists."
+                    fi
+                    export PATH=$HOME/bin:$PATH
+                    kubectl version --client
+                '''
                 }
             }
         }
