@@ -6,6 +6,7 @@ pipeline {
         KUBECONFIG_PATH = credentials('minikube-kubeconfig')
         IMAGE_NAME = "ghcr.io/gurvindrasingh/trucking-saas/auth-service"
         IMAGE_TAG = "${GIT_COMMIT}"
+        KUBECTL_PATH = "/usr/local/bin/kubectl"
     }
 
     options {
@@ -52,22 +53,40 @@ pipeline {
         //     }
         // }
 
+        // stage('Install kubectl') {
+        //     steps {
+        //         script {
+        //         sh '''
+        //             if [ ! -f "$HOME/bin/kubectl" ]; then
+        //             echo "🔧 Installing kubectl locally..."
+        //             mkdir -p $HOME/bin
+        //             curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
+        //             chmod +x ./kubectl
+        //             mv ./kubectl $HOME/bin/kubectl
+        //             else
+        //             echo "✅ kubectl already exists."
+        //             fi
+        //             export PATH=$HOME/bin:$PATH
+        //             kubectl version --client
+        //         '''
+        //         }
+        //     }
+        // }
+
         stage('Install kubectl') {
             steps {
                 script {
-                sh '''
-                    if [ ! -f "$HOME/bin/kubectl" ]; then
-                    echo "🔧 Installing kubectl locally..."
-                    mkdir -p $HOME/bin
-                    curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
-                    chmod +x ./kubectl
-                    mv ./kubectl $HOME/bin/kubectl
-                    else
-                    echo "✅ kubectl already exists."
-                    fi
-                    export PATH=$HOME/bin:$PATH
-                    kubectl version --client
-                '''
+                    sh """
+                        if ! command -v kubectl > /dev/null; then
+                            echo "🔧 Installing kubectl..."
+                            curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
+                            chmod +x kubectl
+                            mv kubectl /usr/local/bin/kubectl
+                        else
+                            echo "✅ kubectl already exists."
+                        fi
+                        kubectl version --client
+                    """
                 }
             }
         }
@@ -86,7 +105,6 @@ pipeline {
                 script {
                     echo "🚀 Deploying to Kubernetes..."
                     withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
-                        // Replace the placeholder in YAML
                         sh """
                         sed -i 's|\\\${IMAGE_TAG}|${IMAGE_TAG}|g' infra/k8s/auth-service/deployment.yaml
                         kubectl apply -f infra/k8s/auth-service/deployment.yaml
