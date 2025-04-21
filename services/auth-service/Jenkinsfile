@@ -56,13 +56,22 @@ pipeline {
             steps {
                 script {
                 sh '''
-                    curl -LO "https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl"
+                    if [ ! -f "$HOME/bin/kubectl" ]; then
+                    echo "🔧 Installing kubectl locally..."
+                    mkdir -p $HOME/bin
+                    curl -LO https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl
                     chmod +x ./kubectl
-                    mv ./kubectl /usr/local/bin/kubectl
+                    mv ./kubectl $HOME/bin/kubectl
+                    else
+                    echo "✅ kubectl already exists."
+                    fi
+                    export PATH=$HOME/bin:$PATH
+                    kubectl version --client
                 '''
                 }
             }
         }
+
 
         stage('Check kubectl') {
             steps {
