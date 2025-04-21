@@ -20,37 +20,38 @@ pipeline {
             }
         }
 
-        stage('Test Docker') {
-            steps {
-                script {
-                    echo "Checking Docker version..."
-                    sh 'docker --version'
-                    echo "Listing Docker containers..."
-                    sh 'docker ps'
-                }
-            }
-        }
+        // stage('Pull Image from GHCR') {
+        //     steps {
+        //         script {
+        //             echo "🔄 Pulling Docker image from GHCR..."
+        //             sh "echo $GHCR_CREDENTIALS_PSW | docker login ghcr.io -u $GHCR_CREDENTIALS_USR --password-stdin"
+        //             sh "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
+        //         }
+        //     }
+        // }
 
-        stage('Pull Image from GHCR') {
-            steps {
-                script {
-                    echo "🔄 Pulling Docker image from GHCR..."
-                    sh "echo $GHCR_CREDENTIALS_PSW | docker login ghcr.io -u $GHCR_CREDENTIALS_USR --password-stdin"
-                    sh "docker pull ${IMAGE_NAME}:${IMAGE_TAG}"
-                }
-            }
-        }
+        // stage('Deploy to Kubernetes') {
+        //     steps {
+        //         script {
+        //             echo "🚀 Deploying to Kubernetes..."
+        //             withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
+        //                 sh "kubectl set image deployment/auth-service auth-service=${IMAGE_NAME}:${IMAGE_TAG} --namespace=default || kubectl apply -f infra/k8s/auth-service/deployment.yaml"
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Deploy to Kubernetes') {
             steps {
                 script {
                     echo "🚀 Deploying to Kubernetes..."
                     withEnv(["KUBECONFIG=${KUBECONFIG_PATH}"]) {
-                        sh "kubectl set image deployment/auth-service auth-service=${IMAGE_NAME}:${IMAGE_TAG} --namespace=default || kubectl apply -f infra/k8s/auth-service/deployment.yaml"
+                        sh "kubectl apply -f infra/k8s/auth-service/deployment.yaml"
                     }
                 }
             }
         }
+
     }
 
     post {
