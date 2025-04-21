@@ -2,10 +2,10 @@ pipeline {
     agent any
 
     environment {
-        GHCR_CREDENTIALS = credentials('GHCR_PAT')  // GitHub Container Registry credentials
-        KUBECONFIG_PATH = credentials('minikube-kubeconfig')  // Kubeconfig for Minikube
-        IMAGE_NAME = "ghcr.io/gurvindrasingh/auth-service"
-        IMAGE_TAG = "latest"  // Or use env.BUILD_ID if you version images that way
+        GHCR_CREDENTIALS = credentials('GHCR_PAT')
+        KUBECONFIG_PATH = credentials('minikube-kubeconfig')
+        IMAGE_NAME = "ghcr.io/gurvindrasingh/trucking-saas/auth-service"
+        IMAGE_TAG = "${GIT_COMMIT}"
     }
 
     options {
