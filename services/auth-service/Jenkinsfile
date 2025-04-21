@@ -52,6 +52,26 @@ pipeline {
         //     }
         // }
 
+        stage('Install kubectl') {
+            steps {
+                script {
+                sh '''
+                    curl -LO "https://dl.k8s.io/release/v1.24.1/bin/linux/amd64/kubectl"
+                    chmod +x ./kubectl
+                    mv ./kubectl /usr/local/bin/kubectl
+                '''
+                }
+            }
+        }
+
+        stage('Check kubectl') {
+            steps {
+                script {
+                sh 'which kubectl || echo "kubectl not found"'
+                }
+            }
+        }
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
