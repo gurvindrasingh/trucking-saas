@@ -20,6 +20,19 @@ pipeline {
             }
         }
 
+        stages {
+            stage('Test Docker') {
+                steps {
+                    script {
+                        echo "Checking Docker version..."
+                        sh 'docker --version'
+                        echo "Listing Docker containers..."
+                        sh 'docker ps'
+                    }
+                }
+            }
+        }
+
         stage('Pull Image from GHCR') {
             steps {
                 script {
