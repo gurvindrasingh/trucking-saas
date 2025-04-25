@@ -1,4 +1,4 @@
-services:
+services:  
   auth-service:
     container_name: auth-service-container
     build:
@@ -9,37 +9,92 @@ services:
       - /usr/src/app/node_modules
     ports:
       - "${AUTH_HOST_PORT}:${AUTH_DOCKER_PORT}"
-      - "${AUTH_HOST_DEBUG_PORT}:${AUTH_DOCKER_DEBUG_PORT}"
+      #- "${HOST_DEBUG_PORT}:${DOCKER_DEBUG_PORT}"
     env_file:
       - ./services/auth-service/.env
     depends_on:
       - auth-db
-    command: sh -c "npm run debug"
+    #command: sh -c "npm run debug"
     networks:
       - trucking-network
-
   auth-db:
     image: postgres:13-alpine
     container_name: auth-db-container
     restart: always
     ports:
-      - "${PGDB_HOST_PORT}:${PGDB_DOCKER_PORT}"
+      - "${AUTH_PGDB_HOST_PORT}:${AUTH_PGDB_DOCKER_PORT}"
     env_file:
       - ./services/auth-service/.env
     environment:
-      POSTGRES_USER: ${PGDB_USER}
-      POSTGRES_PASSWORD: ${PGDB_PASSWORD}
-      POSTGRES_DB: ${PGDB_NAME}
+      POSTGRES_USER: ${AUTH_PGDB_USER}
+      POSTGRES_PASSWORD: ${AUTH_PGDB_PASSWORD}
+      POSTGRES_DB: ${AUTH_PGDB_NAME}
     volumes:
       - auth-db-data:/var/lib/postgresql/data
     networks:
       - trucking-network
-
-  db-adminer:
+  auth-db-adminer:
     image: adminer
+    container_name: auth-db-adminer
     restart: always
     ports:
-      - "${ADMINER_HOST_PORT}:${ADMINER_DOCKER_PORT}"
+      - "${AUTH_ADMINER_HOST_PORT}:${ADMINER_DOCKER_PORT}"
+    depends_on:
+      - auth-db
+    networks:
+      - trucking-network
+  user-service:
+    container_name: user-service-container
+    build:
+      context: ./services/user-service
+      dockerfile: ../../docker/services/user-service/Dockerfile
+    volumes:
+      - ./services/user-service:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+     - "${USER_HOST_PORT}:${USER_DOCKER_PORT}"
+     - "${HOST_DEBUG_PORT}:${DOCKER_DEBUG_PORT}"
+    env_file:
+     - ./services/user-service/.env
+    depends_on:
+     - user-db
+     - redis
+    #command: sh -c "npm run debug"
+    networks:
+     - trucking-network
+  user-db:
+    image: postgres:13-alpine
+    container_name: user-db-container
+    restart: always  
+    ports:
+      - "${USER_PGDB_HOST_PORT}:${USER_PGDB_DOCKER_PORT}"
+    env_file:
+      - ./services/user-service/.env
+    environment:
+      POSTGRES_USER: ${USER_PGDB_USER}
+      POSTGRES_PASSWORD: ${USER_PGDB_PASSWORD}
+      POSTGRES_DB: ${USER_PGDB_NAME}
+    volumes:
+      - user-db-data:/var/lib/postgresql/data
+    networks:
+      - trucking-network
+  user-db-adminer:
+    image: adminer
+    container_name: user-db-adminer
+    restart: always
+    ports:
+      - "${USER_ADMINER_HOST_PORT}:${ADMINER_DOCKER_PORT}"
+    depends_on:
+      - user-db
+    networks:
+      - trucking-network
+  redis:
+    image: redis:6-alpine
+    container_name: redis-container
+    ports:
+      - "${USER_REDIS_HOST_PORT}:${USER_REDIS_DOCKER_PORT}"
+    volumes:
+      - redis-data:/data
     networks:
       - trucking-network
 
@@ -49,3 +104,5 @@ networks:
 
 volumes:
   auth-db-data:
+  user-db-data:
+  redis-data:

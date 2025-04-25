@@ -11,7 +11,7 @@ export const signupUser = async ({ name, email, password }: any) => {
     data: { name, email, password: hashedPassword },
   });
 
-  const token = signJwt({ id: user.id, email: user.email });
+  const token = signJwt({ id: user.id });
 
   return { user, token };
 };
@@ -23,7 +23,7 @@ export const loginUser = async ({ email, password }: any) => {
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) throw new Error("Invalid credentials");
 
-  const token = signJwt({ id: user.id, email: user.email });
+  const token = signJwt({ id: user.id });
 
   return { user, token };
 };

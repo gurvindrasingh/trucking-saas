@@ -1,7 +1,7 @@
 {
-  "name": "auth-service",
+  "name": "user-service",
   "version": "1.0.0",
-  "description": "This is a auth service to manage authentication",
+  "description": "This is a user service to get and save user data",
   "main": "dist/index.js",
   "author": "Gurvindra Singh",
   "scripts": {
@@ -16,19 +16,28 @@
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",
+    "apollo-server-express": "^3.13.0",
     "bcryptjs": "^3.0.2",
     "dotenv": "^16.5.0",
     "express": "^4.18.3",
+    "graphql": "^16.10.0",
+    "ioredis": "^5.6.1",
     "jsonwebtoken": "^9.0.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/express": "^4.17.21",
     "@types/jest": "^29.5.14",
     "@types/jsonwebtoken": "^9.0.9",
+    "@types/node": "^22.14.1",
+    "@types/supertest": "^6.0.3",
     "jest": "^29.7.0",
     "prisma": "^6.6.0",
+    "supertest": "^7.1.0",
     "ts-jest": "^29.3.2",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.8.3"
+  },
+  "overrides": {
+    "@types/express": "4.17.21"
   }
 }

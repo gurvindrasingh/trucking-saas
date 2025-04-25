@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+      "target": "ES2021",
+      "module": "CommonJS",
+      "moduleResolution": "node",
+      "lib": ["ESNext"],
+      "strict": true,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true,
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "resolveJsonModule": true,
+      // "baseUrl": ".",
+      // "paths": {
+      //   "@types/express": ["node_modules/@types/express"]
+      // }
+    },
+    "include": ["src/**/*.ts", "src/tests/**/*.ts"],
+    "exclude": ["node_modules", "dist"]
+  }
