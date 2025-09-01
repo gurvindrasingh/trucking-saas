@@ -21,12 +21,17 @@ export const signupUser = async ({ name, email, password, phone, bio }: any) => 
         Source: 'auth-service',
         DetailType: 'UserRegistered',
         Detail: JSON.stringify({ id: user.id, name, phone, bio }),
-        EventBusName: 'default',
+        EventBusName: 'trucking-bus',
       },
     ],
   });
 
-  await eventBridge.send(command);
+  try {
+    await eventBridge.send(command);
+    console.log('Event sent successfully to EventBridge');
+  } catch (err) {
+    console.error('Error sending event to EventBridge:', err);
+  }
 
   const token = signJwt({ id: user.id });
 

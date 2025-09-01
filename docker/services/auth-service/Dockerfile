@@ -22,7 +22,7 @@ COPY . .
 RUN npm run prisma:generate
 #RUN npm run prisma:seed
 
-#CMD ["npm", "run", "debug"]
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "debug"]
+#CMD ["npm", "run", "dev"]
 
 EXPOSE 4000

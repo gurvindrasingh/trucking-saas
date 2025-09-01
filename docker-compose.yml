@@ -1,4 +1,4 @@
-services:  
+services:
   auth-service:
     container_name: auth-service-container
     build:
@@ -9,9 +9,13 @@ services:
       - /usr/src/app/node_modules
     ports:
       - "${AUTH_HOST_PORT}:${AUTH_DOCKER_PORT}"
-      #- "${HOST_DEBUG_PORT}:${DOCKER_DEBUG_PORT}"
+      - "${HOST_DEBUG_PORT}:${DOCKER_DEBUG_PORT}"
     env_file:
       - ./services/auth-service/.env
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION}
     depends_on:
       - auth-db
     #command: sh -c "npm run debug"
@@ -52,20 +56,20 @@ services:
       - ./services/user-service:/usr/src/app
       - /usr/src/app/node_modules
     ports:
-     - "${USER_HOST_PORT}:${USER_DOCKER_PORT}"
-     - "${HOST_DEBUG_PORT}:${DOCKER_DEBUG_PORT}"
+      - "${USER_HOST_PORT}:${USER_DOCKER_PORT}"
+      #- "${HOST_DEBUG_PORT}:${DOCKER_DEBUG_PORT}"
     env_file:
-     - ./services/user-service/.env
+      - ./services/user-service/.env
     depends_on:
-     - user-db
-     - redis
+      - user-db
+      - redis
     #command: sh -c "npm run debug"
     networks:
-     - trucking-network
+      - trucking-network
   user-db:
     image: postgres:13-alpine
     container_name: user-db-container
-    restart: always  
+    restart: always
     ports:
       - "${USER_PGDB_HOST_PORT}:${USER_PGDB_DOCKER_PORT}"
     env_file:
